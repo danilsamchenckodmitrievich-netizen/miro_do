@@ -468,6 +468,11 @@ function fitView(anim = true) {
   const t = b ? viewFor(b) : { x: innerWidth / 2, y: innerHeight / 2, z: 1 };
   if (anim) animateTo(t); else { Object.assign(view, t); applyView(); }
 }
+// a page opened in a background or collapsed window can report a near-zero size; wait for a real one
+function fitOnLoad() {
+  if (innerWidth > 200 && innerHeight > 200) fitView(false);
+  else addEventListener('resize', fitOnLoad, { once: true });
+}
 const viewCenter = () => ({ x: (innerWidth / 2 - view.x) / view.z, y: (innerHeight / 2 - view.y) / view.z });
 
 // ---------- selection UI, props, minimap ----------
@@ -1627,7 +1632,7 @@ const sync = (() => {
     if (data.length) {
       objs = new Map(data.map(r => { const o = normalize(r.data); delete o._by; return [r.id, o]; }));
       selected.clear(); renderAll(); saveSoon();
-      fitView(false);
+      fitOnLoad();
     } else {
       objs.forEach((o, id) => dirtySet.add(id));
     }
@@ -1683,7 +1688,7 @@ function seed() {
   setTitle(meta.title);
   setTool('select');
   renderAll(); applyView(); renderUsers();
-  if (objs.size) fitView(false);
+  if (objs.size) fitOnLoad();
   sync.start();
   addEventListener('resize', scheduleUI);
   window.miroDebug = { get objs() { return objs; }, view };
