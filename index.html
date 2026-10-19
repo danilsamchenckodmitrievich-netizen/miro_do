@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Miro Do</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="board">
+  <div id="world">
+    <div id="items"></div>
+    <div id="sel"></div>
+    <div id="cursors"></div>
+  </div>
+</div>
+<div id="marquee"></div>
+
+<header id="topbar">
+  <div class="group">
+    <span class="logo">Miro&nbsp;Do</span>
+    <span id="status" class="pill off">Офлайн</span>
+  </div>
+  <div class="group">
+    <button data-act="undo" title="Отменить (Ctrl+Z)"><svg viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button>
+    <button data-act="redo" title="Повторить (Ctrl+Y)"><svg viewBox="0 0 24 24"><path d="m15 14 5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></svg></button>
+  </div>
+  <div class="group">
+    <div id="users"></div>
+    <button data-act="share" class="primary">Поделиться</button>
+    <div class="menu">
+      <button data-act="menu" title="Меню"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg></button>
+      <div id="menu" hidden>
+        <button data-act="new">Новая доска</button>
+        <button data-act="export">Экспорт (.json)</button>
+        <button data-act="import">Импорт (.json)</button>
+        <button data-act="rename">Изменить имя</button>
+        <button data-act="clear" class="danger">Очистить доску</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<nav id="toolbar">
+  <button data-tool="select" title="Выбор (V)"><svg viewBox="0 0 24 24"><path d="M5 3l14 8-6 1.5L10 19z"/></svg></button>
+  <button data-tool="hand" title="Рука (H или пробел)"><svg viewBox="0 0 24 24"><path d="M8 13V5.5a1.5 1.5 0 0 1 3 0V12M11 11V4.5a1.5 1.5 0 0 1 3 0V12M14 11V6.5a1.5 1.5 0 0 1 3 0V15a6 6 0 0 1-6 6h-.5a6 6 0 0 1-4.7-2.3L3.5 15.5a1.5 1.5 0 0 1 2.3-2l2.2 2.3"/></svg></button>
+  <hr>
+  <button data-tool="sticky" title="Стикер (N)"><svg viewBox="0 0 24 24"><path d="M4 4h16v11l-5 5H4z"/><path d="M15 20v-5h5"/></svg></button>
+  <button data-tool="rect" title="Прямоугольник (R)"><svg viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="13" rx="2"/></svg></button>
+  <button data-tool="ellipse" title="Круг (O)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/></svg></button>
+  <button data-tool="diamond" title="Ромб (D)"><svg viewBox="0 0 24 24"><path d="M12 3l9 9-9 9-9-9z"/></svg></button>
+  <button data-tool="text" title="Текст (T)"><svg viewBox="0 0 24 24"><path d="M5 6V4h14v2M12 4v16M9 20h6"/></svg></button>
+  <button data-tool="arrow" title="Стрелка (A)"><svg viewBox="0 0 24 24"><path d="M5 19 19 5M10 5h9v9"/></svg></button>
+  <button data-tool="pen" title="Карандаш (P)"><svg viewBox="0 0 24 24"><path d="M4 20l1-5L16 4l4 4L9 19z"/><path d="M14 6l4 4"/></svg></button>
+  <button data-tool="eraser" title="Ластик (E)"><svg viewBox="0 0 24 24"><path d="M8 20h12M5.5 14.5l9-9a2 2 0 0 1 2.8 0l2.2 2.2a2 2 0 0 1 0 2.8L12 18l-2 2H8l-2.5-2.5a2 2 0 0 1 0-3z"/><path d="M9 11l5 5"/></svg></button>
+  <button data-act="image" title="Картинка (или вставьте Ctrl+V / перетащите файл)"><svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M20 16l-5-5-9 8.5"/></svg></button>
+</nav>
+
+<div id="props" hidden></div>
+
+<div id="zoombar">
+  <button data-act="zoomout" title="Отдалить (-)">−</button>
+  <button data-act="zoomreset" id="zoomlabel" title="100%">100%</button>
+  <button data-act="zoomin" title="Приблизить (+)">+</button>
+  <button data-act="fit" title="Показать всё (Shift+1)"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/></svg></button>
+  <button data-act="help" title="Горячие клавиши">?</button>
+</div>
+
+<canvas id="minimap" width="200" height="130"></canvas>
+
+<div id="help" hidden>
+  <h3>Горячие клавиши</h3>
+  <dl>
+    <dt>V / H</dt><dd>Выбор / рука</dd>
+    <dt>N R O D T</dt><dd>Стикер, прямоугольник, круг, ромб, текст</dd>
+    <dt>A / P / E</dt><dd>Стрелка, карандаш, ластик</dd>
+    <dt>Пробел + мышь</dt><dd>Двигать холст</dd>
+    <dt>Колесо</dt><dd>Масштаб (Shift — прокрутка)</dd>
+    <dt>Двойной клик</dt><dd>Редактировать текст</dd>
+    <dt>Ctrl+Z / Ctrl+Y</dt><dd>Отменить / повторить</dd>
+    <dt>Ctrl+C / V / D</dt><dd>Копировать, вставить, дублировать</dd>
+    <dt>Ctrl+A</dt><dd>Выделить всё</dd>
+    <dt>] / [</dt><dd>На передний / задний план</dd>
+    <dt>Delete</dt><dd>Удалить</dd>
+    <dt>Shift+1</dt><dd>Показать всё</dd>
+  </dl>
+</div>
+
+<div id="toast" hidden></div>
+<input type="file" id="file-image" accept="image/*" hidden>
+<input type="file" id="file-json" accept=".json,application/json" hidden>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
